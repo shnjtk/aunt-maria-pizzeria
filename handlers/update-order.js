@@ -1,15 +1,37 @@
 'use strict';
 
-function updateOrder(id, updates) {
-    if (!id || !updates) {
+const AWS = require('aws-sdk');
+const docClient = new AWS.DynamoDB.DocumentClient();
+
+function updateOrder(orderId, options) {
+    if (!options || !options.pizza || !options.address) {
         throw new Error(
-            'Order ID and updates are required for updating the order.'
+            'Both pizza and address are required to update an order.'
         );
     }
 
-    return {
-        message: `Order ${id} was successfully updated.`,
-    };
+    return docClient
+        .update({
+            TableName: 'pizza-orders',
+            Key: {
+                orderId: orderId,
+            },
+            UpdateExpression: 'set pizza = :p, address=:a',
+            ExpressionAttributeValues: {
+                ':p': options.pizza,
+                ':a': options.address,
+            },
+            ReturnValues: 'ALL_NEW',
+        })
+        .promise()
+        .then(result => {
+            console.log('Order is updated!', result);
+            return result.Attributes;
+        })
+        .catch(error => {
+            console.log('Oops, order is not updated. :(', error);
+            throw error;
+        });
 }
 
 module.exports = updateOrder;
