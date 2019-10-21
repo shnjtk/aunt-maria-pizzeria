@@ -25,7 +25,7 @@
     "dependencies": {
         "claudia-api-builder": "^4.1.2",
         "claudia-bot-builder": "^4.5.0",
-        "uuid": "^3.3.3"
+        "minimal-request-promise": "^1.5.0"
     },
     "optionalDependencies": {
         "aws-sdk": "^2.553.0"

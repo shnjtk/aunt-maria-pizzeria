@@ -8,6 +8,7 @@ const getOrders = require('./handlers/get-orders');
 const createOrder = require('./handlers/create-order');
 const updateOrder = require('./handlers/update-order');
 const deleteOrder = require('./handlers/delete-order');
+const updateDeliveryStatus = require('./handlers/update-delivery-status');
 
 api.get('/', () => 'Welcome to Aunt Maria Pizzeria API');
 
@@ -72,6 +73,17 @@ api.delete(
         return deleteOrder(request.pathParams.id);
     },
     {
+        error: 400,
+    }
+);
+
+api.post(
+    '/delivery',
+    request => {
+        return updateDeliveryStatus(request.body);
+    },
+    {
+        success: 200,
         error: 400,
     }
 );
