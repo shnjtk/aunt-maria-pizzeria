@@ -9,6 +9,7 @@ const createOrder = require('./handlers/create-order');
 const updateOrder = require('./handlers/update-order');
 const deleteOrder = require('./handlers/delete-order');
 const updateDeliveryStatus = require('./handlers/update-delivery-status');
+const getSignedUrl = require('./handlers/generate-presigned-url');
 
 api.registerAuthorizer('userAuthentication', {
     providerARNs: [process.env.USER_POOL_ARN],
@@ -94,6 +95,17 @@ api.post(
     },
     {
         success: 200,
+        error: 400,
+        cognitoAuthorizer: 'userAuthentication',
+    }
+);
+
+api.get(
+    '/upload-url',
+    request => {
+        return getSignedUrl();
+    },
+    {
         error: 400,
         cognitoAuthorizer: 'userAuthentication',
     }
