@@ -10,6 +10,10 @@ const updateOrder = require('./handlers/update-order');
 const deleteOrder = require('./handlers/delete-order');
 const updateDeliveryStatus = require('./handlers/update-delivery-status');
 
+api.registerAuthorizer('userAuthentication', {
+    providerARNs: [process.env.USER_POOL_ARN],
+});
+
 api.get('/', () => 'Welcome to Aunt Maria Pizzeria API');
 
 api.get('/pizzas', () => {
@@ -49,11 +53,12 @@ api.get(
 api.post(
     '/orders',
     request => {
-        return createOrder(request.body);
+        return createOrder(request);
     },
     {
         success: 201,
         error: 400,
+        cognitoAuthorizer: 'userAuthentication',
     }
 );
 
@@ -64,16 +69,21 @@ api.put(
     },
     {
         error: 400,
+        cognitoAuthorizer: 'userAuthentication',
     }
 );
 
 api.delete(
     '/orders/{id}',
     request => {
-        return deleteOrder(request.pathParams.id);
+        return deleteOrder(
+            request.pathParams.id,
+            request.context.authorizer.claims
+        );
     },
     {
         error: 400,
+        cognitoAuthorizer: 'userAuthentication',
     }
 );
 
@@ -85,6 +95,7 @@ api.post(
     {
         success: 200,
         error: 400,
+        cognitoAuthorizer: 'userAuthentication',
     }
 );
 

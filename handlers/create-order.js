@@ -13,8 +13,17 @@ const WEBHOOK_URL =
     process.env.WEBHOOK_URL ||
     'https://g8fhlgccof.execute-api.eu-central-1.amazonaws.com/latest/delivery';
 
-function createOrder(order) {
-    if (!order || !order.pizzaId || !order.address) {
+function createOrder(request) {
+    console.log('Save an order', request.body);
+    const userData = request.context.authorizer.claims;
+    console.log('User data', userData);
+
+    let userAddress = request.body && request.body.address;
+    if (!userAddress) {
+        userAddress = JSON.parse(userData.address).formatted;
+    }
+
+    if (!request.body || !request.body.pizzaId || !userAddress) {
         throw new Error(
             'To order pizza please provide pizza type and address where pizza should be delivered.'
         );
@@ -29,7 +38,7 @@ function createOrder(order) {
             body: JSON.stringify({
                 pickupTime: '15.34pm',
                 pickupAddress: 'Aunt Maria Pizzeria',
-                deliveryAddress: order.address,
+                deliveryAddress: userAddress,
                 webhookUrl: WEBHOOK_URL,
             }),
         })
@@ -41,7 +50,7 @@ function createOrder(order) {
                     Item: {
                         orderId: response.deliveryId,
                         pizza: order.pizza,
-                        address: order.address,
+                        address: userAddress,
                         orderStatus: 'pending',
                     },
                 })
