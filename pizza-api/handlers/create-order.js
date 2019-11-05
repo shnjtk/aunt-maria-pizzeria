@@ -1,8 +1,7 @@
+/* global process */
 'use strict';
 
-const AWSXRay = require('aws-xray-sdk-core');
-const AWS = AWSXRay.captureAWS(require('aws-sdk'));
-const docClient = new AWS.DynamoDB.DocumentClient();
+const AWS = require('aws-sdk');
 const rp = require('minimal-request-promise');
 
 const DELIVERY_API_URL =
@@ -13,7 +12,7 @@ const WEBHOOK_URL =
     process.env.WEBHOOK_URL ||
     'https://g8fhlgccof.execute-api.eu-central-1.amazonaws.com/latest/delivery';
 
-function createOrder(request) {
+function createOrder(request, tableName = 'pizza-orders') {
     console.log('Save an order', request.body);
     const userData = request.context.authorizer.claims;
     console.log('User data', userData);
@@ -28,6 +27,10 @@ function createOrder(request) {
             'To order pizza please provide pizza type and address where pizza should be delivered.'
         );
     }
+
+    const docClient = new AWS.DynamoDB.DocumentClient({
+        region: process.env.AWS_DEFAULT_REGION || 'eu-central-1',
+    });
 
     return rp
         .post(DELIVERY_API_URL, {
@@ -46,10 +49,10 @@ function createOrder(request) {
         .then(response => {
             return docClient
                 .put({
-                    TableName: 'pizza-orders',
+                    TableName: tableName,
                     Item: {
                         orderId: response.deliveryId,
-                        pizza: order.pizza,
+                        pizza: response.pizza,
                         address: userAddress,
                         orderStatus: 'pending',
                     },

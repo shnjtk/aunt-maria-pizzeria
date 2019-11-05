@@ -1,3 +1,4 @@
+/* global process */
 'use strict';
 
 const Api = require('claudia-api-builder');
@@ -33,18 +34,8 @@ api.get(
 
 api.get(
     '/orders',
-    request => {
+    () => {
         return getOrders();
-    },
-    {
-        error: 400,
-    }
-);
-
-api.get(
-    '/orders/{id}',
-    request => {
-        return getOrders(request.pathParams.id);
     },
     {
         error: 400,
@@ -60,6 +51,16 @@ api.post(
         success: 201,
         error: 400,
         cognitoAuthorizer: 'userAuthentication',
+    }
+);
+
+api.get(
+    '/orders/{id}',
+    request => {
+        return getOrders(request.pathParams.id);
+    },
+    {
+        error: 400,
     }
 );
 
@@ -102,7 +103,7 @@ api.post(
 
 api.get(
     '/upload-url',
-    request => {
+    () => {
         return getSignedUrl();
     },
     {

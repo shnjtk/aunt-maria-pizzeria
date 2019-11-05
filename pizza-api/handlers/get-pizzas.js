@@ -1,9 +1,9 @@
 'use strict';
 
-const pizzas = require('../data/pizzas.json');
+const listOfPizzas = require('../data/pizzas.json');
 
-function getPizzas(pizzaId) {
-    if (!pizzaId) {
+function getPizzas(pizzaId, pizzas = listOfPizzas) {
+    if (pizzaId === undefined || pizzaId === null) {
         return pizzas;
     }
 

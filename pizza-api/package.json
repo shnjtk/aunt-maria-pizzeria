@@ -6,7 +6,9 @@
     "scripts": {
         "create": "claudia create --region ap-northeast-1 --api-module api",
         "update": "claudia update --cache-api-config apiConfig",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "pretest": "eslint handlers spec *.js",
+        "test": "node spec/support/jasmine-runner.js",
+        "debug": "node debug spec/support/jasmine-runner.js"
     },
     "repository": {
         "type": "git",
@@ -20,13 +22,19 @@
     },
     "homepage": "https://github.com/shnjtk/aunt-maria-pizzeria-api#readme",
     "devDependencies": {
-        "claudia": "^5.9.0"
+        "claudia": "^5.9.0",
+        "eslint": "^6.6.0",
+        "eslint-config-defaults": "^9.0.0",
+        "fake-http-request": "^1.4.0",
+        "jasmine": "^3.5.0",
+        "jasmine-spec-reporter": "^4.2.1"
     },
     "dependencies": {
         "aws-xray-sdk-core": "^2.4.0",
         "claudia-api-builder": "^4.1.2",
         "claudia-bot-builder": "^4.5.0",
-        "minimal-request-promise": "^1.5.0"
+        "minimal-request-promise": "^1.5.0",
+        "uuid": "^3.3.3"
     },
     "optionalDependencies": {
         "aws-sdk": "^2.553.0"
