@@ -11,9 +11,14 @@
     "author": "Shinji Takae <shnjtk@gmail.com>",
     "license": "ISC",
     "dependencies": {
-        "claudia-bot-builder": "shnjtk/claudia-bot-builder#master"
+        "claudia-bot-builder": "shnjtk/claudia-bot-builder#master",
+        "minimal-request-promise": "^1.5.0",
+        "uuid": "^3.3.3"
     },
     "devDependencies": {
         "claudia": "^5.9.1"
+    },
+    "optionalDependencies": {
+        "aws-sdk": "^2.563.0"
     }
 }

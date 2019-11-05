@@ -1,25 +1,73 @@
 'use strict';
 
-const pizzas = require('./data/pizzas.json');
-
 const botBuilder = require('claudia-bot-builder');
-const fbTemplate = botBuilder.fbTemplate;
+
+const pizzaDetails = require('./handlers/pizza-details');
+const orderPizza = require('./handlers/order-pizza');
+const pizzaMenu = require('./handlers/pizza-menu');
+const saveLocation = require('./handlers/save-location');
+const deliveryWebhook = require('./handlers/delivery-webhook');
+const getLastPizza = require('./handlers/get-last-pizza');
 
 const api = botBuilder(
-    () => {
-        const message = new fbTemplate.Generic();
+    message => {
+        if (message.postback) {
+            const [action, pizzaId] = message.text.split('|');
+            if (action === 'DETAILS') {
+                return pizzaDetails(pizzaId);
+            } else if (action === 'ORDER') {
+                return orderPizza(pizzaId, message.sender);
+            }
+        }
 
-        pizzas.forEach(pizza => {
-            message
-                .addBubble(pizza.name)
-                .addImage(pizza.image)
-                .addButton('Details', pizza.id);
+        if (
+            message.originalRequest.message.attachments &&
+            message.originalRequest.message.attachments.length &&
+            message.originalRequest.message.attachments[0].payload
+                .coordinates &&
+            message.originalRequest.message.attachments[0].payload.coordinates
+                .lat &&
+            message.originalRequest.message.attachments[0].payload.coordinates
+                .long
+        ) {
+            return saveLocation(
+                message.originalRequest.message.attachments[0].payload
+                    .coordinates
+            );
+        }
+
+        if (
+            message.originalRequest.message.nlp &&
+            message.originalRequest.message.nlp.entities &&
+            message.originalRequest.message.nlp.entities['thanks'] &&
+            message.originalRequest.message.nlp.entities['thanks'].length &&
+            message.originalRequest.message.nlp.entities['thanks'][0]
+                .confidence > 0.8
+        ) {
+            return "You're welcome!";
+        }
+
+        return getLastPizza(message.sender).then(lastPizza => {
+            const lastPizzaText = lastPizza
+                ? `grad to have you back! Hope you liked your ${lastPizza.name} pizza`
+                : '';
+            return [
+                "Hello, ${lastPizzaText} here's our pizza menu:",
+                pizzaMenu(),
+            ];
         });
-
-        return ["Hello, here's our pizza menu:", message.get()];
     },
     {
         platform: ['facebook'],
+    }
+);
+
+api.post(
+    '/delivery',
+    request => deliveryWebhook(request.body, request.env.facebookAccessToken),
+    {
+        success: 200,
+        error: 400,
     }
 );
 
