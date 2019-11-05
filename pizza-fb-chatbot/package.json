@@ -1,0 +1,19 @@
+{
+    "name": "pizza-fb-chatbot",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "create": "claudia create --region ap-northeast-1 --api-module bot --configure-fb-bot",
+        "update": "claudia update --cache-api-config apiConfig"
+    },
+    "keywords": [],
+    "author": "Shinji Takae <shnjtk@gmail.com>",
+    "license": "ISC",
+    "dependencies": {
+        "claudia-bot-builder": "shnjtk/claudia-bot-builder#master"
+    },
+    "devDependencies": {
+        "claudia": "^5.9.1"
+    }
+}
