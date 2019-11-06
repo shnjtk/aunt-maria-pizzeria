@@ -1,0 +1,24 @@
+{
+    "name": "simple-express-app",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "create": "claudia create --handler lambda.handler --deploy-proxy-api --region ap-northeast-1",
+        "update": "claudia update --cache-api-config apiConfig --set-env-from-json env.json",
+        "generate-proxy-wrapper": "claudia generate-serverless-express-proxy --express-module app",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "aws-serverless-express": "^3.3.6",
+        "body-parser": "^1.19.0",
+        "express": "^4.17.1",
+        "mongodb": "^3.3.3"
+    },
+    "devDependencies": {
+        "claudia": "^5.9.1"
+    }
+}
