@@ -23,7 +23,7 @@
     "claudia": "^5.9.1"
   },
   "optionalDependencies": {
-    "aws-sdk": "^2.553.0"
+    "aws-sdk": "^2.814.0"
   },
   "dependencies": {
     "mime": "^2.4.4"
